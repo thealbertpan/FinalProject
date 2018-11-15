@@ -16,7 +16,11 @@ int potPin_setNote_map = 0;
 
 int nextChannelButtonPin = 30;
 int prevChannelButtonPin = 29;
+
 int channelDisplayed = 0;
+
+boolean channelButtonState[2] = {LOW, LOW};
+boolean lastChannelButtonState[2] = {LOW, LOW};
 
 boolean ledState[3][4] = {
   { LOW, HIGH, LOW, HIGH },
@@ -25,9 +29,10 @@ boolean ledState[3][4] = {
 };
 
 void setup() {
-
   for(int ledPin = 33; ledPin < 40; ledPin = ledPin+2)
     pinMode(ledPin, OUTPUT);
+  pinMode(nextChannelButtonPin, INPUT);
+  pinMode(prevChannelButtonPin, INPUT);
 }
 
 void loop() {
@@ -82,5 +87,30 @@ void setLEDStates()
     digitalWrite(leds[ledNumber], HIGH);
   else if(ledState[0][ledNumber] == LOW)
     digitalWrite(leds[ledNumber], LOW);
+  }
+}
+
+void nextChannel()
+{
+  lastChannelButtonState[0] = channelButtonState[0];
+  channelButtonState[0] = digitalRead(nextChannelButtonPin);
+  if(channelButtonState[0] == HIGH && lastChannelButtonState[0] == LOW)
+  {
+    channelDisplayed += 1;
+    if(channelDisplayed > 2)
+      channelDisplayed = 0;
+    Serial.println(channelDisplayed);
+  }
+}
+void prevChannel()
+{
+  lastChannelButtonState[1] = channelButtonState[1];
+  channelButtonState[1] = digitalRead(prevChannelButtonPin);
+  if(channelButtonState[1] == HIGH && lastChannelButtonState[1] == LOW)
+  {
+    channelDisplayed -= 1;
+    if(channelDisplayed < 0)
+      channelDisplayed = 2;
+    Serial.println(channelDisplayed);
   }
 }
