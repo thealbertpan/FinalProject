@@ -50,15 +50,18 @@ void sequence()
   tempo = mappedPotVal_speed;
   if(millis() > lastStepTime + tempo)
   {
+    usbMIDI.sendNoteOff(midiNote[channelDisplayed], 0, 1);
     digitalWrite(leds[currentStep], LOW);
-    if(ledState[channelDisplayed][currentStep] == LOW)
-      usbMIDI.sendNoteOff(midiNote[currentStep], 0, 1);
+      
     currentStep += 1;
     if(currentStep > 3)
       currentStep = 0;
-    digitalWrite(leds[currentStep], HIGH);
-    if(ledState[channelDisplayed][currentStep] == HIGH)
-      usbMIDI.sendNoteOn(midiNote[currentStep], 127, 1);
+    for(int channelNumber = 0; channelNumber < 3; channelNumber ++)
+    {
+      if(ledState[channelNumber][currentStep] == HIGH)
+        usbMIDI.sendNoteOn(midiNote[channelNumber], 127, 1);
+      digitalWrite(leds[currentStep], HIGH);
+    }
     lastStepTime = millis();
   }
 }
