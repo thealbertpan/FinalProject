@@ -51,22 +51,7 @@ void sequence()
     lastStepTime = millis();
   }
 }
-void checkButtons()
-{
-  for(int buttonNumber = 0; buttonNumber < 4; buttonNumber = buttonNumber + 1)
-  {
-  lastButtonState[buttonNumber] = buttonState[buttonNumber];
-  buttonState[buttonNumber] = digitalRead(buttonPins[buttonNumber]);
 
-  if(buttonState[buttonNumber] == HIGH && lastButtonState[buttonNumber] == LOW)
-  {
-    if(ledState[buttonNumber] == LOW)
-      ledState[buttonNumber] = HIGH;
-    else if(ledState[buttonNumber] == HIGH)
-      ledState[buttonNumber] = LOW;
-  }
-  }
-}
 void checkPotSet()
 {
   for(int i = 0; i < 4; i++)
