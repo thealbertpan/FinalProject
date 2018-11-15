@@ -1,5 +1,5 @@
 int leds [4] = {33, 35, 37, 39};
-//boolean ledState[4] = {LOW, LOW, LOW, LOW};
+
 int potPin_speed = A13; //potentiometer pin for speed of lights
 int potVal_speed = 0;
 int mappedPotVal_speed = 0;
@@ -36,6 +36,8 @@ void setup() {
 }
 
 void loop() {
+  nextChannel();
+  prevChannel();
   sequence();
   checkPotSet();
   setLEDStates();
@@ -49,13 +51,13 @@ void sequence()
   if(millis() > lastStepTime + tempo)
   {
     digitalWrite(leds[currentStep], LOW);
-    if(ledState[0][currentStep] == LOW)
+    if(ledState[channelDisplayed][currentStep] == LOW)
       usbMIDI.sendNoteOff(midiNote[currentStep], 0, 1);
     currentStep += 1;
     if(currentStep > 3)
       currentStep = 0;
     digitalWrite(leds[currentStep], HIGH);
-    if(ledState[0][currentStep] == HIGH)
+    if(ledState[channelDisplayed][currentStep] == HIGH)
       usbMIDI.sendNoteOn(midiNote[currentStep], 127, 1);
     lastStepTime = millis();
   }
@@ -71,10 +73,10 @@ void checkPotSet()
   
     if(potPin_setNote_value >= 50 && potPin_setNote_lastvalue < 50)
     {
-      if(ledState[0][i] == LOW)
-        ledState[0][i] = HIGH;
-      else if(ledState[0][i] == HIGH)
-        ledState[0][i] = LOW;
+      if(ledState[channelDisplayed][i] == LOW)
+        ledState[channelDisplayed][i] = HIGH;
+      else if(ledState[channelDisplayed][i] == HIGH)
+        ledState[channelDisplayed][i] = LOW;
     }
   }
 }
@@ -83,9 +85,9 @@ void setLEDStates()
 {
   for(int ledNumber = 0; ledNumber < 4; ledNumber = ledNumber + 1)
   {
-  if(ledState[0][ledNumber] == HIGH || currentStep == ledNumber)
+  if(ledState[channelDisplayed][ledNumber] == HIGH || currentStep == ledNumber)
     digitalWrite(leds[ledNumber], HIGH);
-  else if(ledState[0][ledNumber] == LOW)
+  else if(ledState[channelDisplayed][ledNumber] == LOW)
     digitalWrite(leds[ledNumber], LOW);
   }
 }
