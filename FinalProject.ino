@@ -1,8 +1,5 @@
 int leds [4] = {33, 35, 37, 39};
-boolean ledState[4] = {LOW, LOW, LOW, LOW};
-int buttonPins[4] = {13, 14, 15, 16};
-boolean lastButtonState[4] = {LOW, LOW, LOW, LOW};
-boolean buttonState[4] = {LOW, LOW, LOW, LOW};
+//boolean ledState[4] = {LOW, LOW, LOW, LOW};
 int potPin_speed = A13; //potentiometer pin for speed of lights
 int potVal_speed = 0;
 int mappedPotVal_speed = 0;
@@ -17,17 +14,24 @@ int potPin_setNote_value = 0;
 int potPin_setNote_lastvalue = 0;
 int potPin_setNote_map = 0;
 
+int nextChannelButtonPin = 30;
+int prevChannelButtonPin = 29;
+int channelDisplayed = 0;
+
+boolean ledState[3][4] = {
+  { LOW, HIGH, LOW, HIGH },
+  { LOW, HIGH, HIGH, HIGH },
+  { LOW, LOW, LOW, HIGH }
+};
+
 void setup() {
 
   for(int ledPin = 33; ledPin < 40; ledPin = ledPin+2)
     pinMode(ledPin, OUTPUT);
-  for(int buttonPin = 13; buttonPin < 17; buttonPin +=1)
-    pinMode(buttonPin, INPUT);
 }
 
 void loop() {
   sequence();
-  //checkButtons();
   checkPotSet();
   setLEDStates();
 }
@@ -40,13 +44,13 @@ void sequence()
   if(millis() > lastStepTime + tempo)
   {
     digitalWrite(leds[currentStep], LOW);
-    if(ledState[currentStep] == LOW)
+    if(ledState[0][currentStep] == LOW)
       usbMIDI.sendNoteOff(midiNote[currentStep], 0, 1);
     currentStep += 1;
     if(currentStep > 3)
       currentStep = 0;
     digitalWrite(leds[currentStep], HIGH);
-    if(ledState[currentStep] == HIGH)
+    if(ledState[0][currentStep] == HIGH)
       usbMIDI.sendNoteOn(midiNote[currentStep], 127, 1);
     lastStepTime = millis();
   }
@@ -62,10 +66,10 @@ void checkPotSet()
   
     if(potPin_setNote_value >= 50 && potPin_setNote_lastvalue < 50)
     {
-      if(ledState[i] == LOW)
-        ledState[i] = HIGH;
-      else if(ledState[i] == HIGH)
-        ledState[i] = LOW;
+      if(ledState[0][i] == LOW)
+        ledState[0][i] = HIGH;
+      else if(ledState[0][i] == HIGH)
+        ledState[0][i] = LOW;
     }
   }
 }
@@ -74,9 +78,9 @@ void setLEDStates()
 {
   for(int ledNumber = 0; ledNumber < 4; ledNumber = ledNumber + 1)
   {
-  if(ledState[ledNumber] == HIGH || currentStep == ledNumber)
+  if(ledState[0][ledNumber] == HIGH || currentStep == ledNumber)
     digitalWrite(leds[ledNumber], HIGH);
-  else if(ledState[ledNumber] == LOW)
+  else if(ledState[0][ledNumber] == LOW)
     digitalWrite(leds[ledNumber], LOW);
   }
 }
