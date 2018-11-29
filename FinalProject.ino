@@ -1,5 +1,5 @@
 int leds [4] = {33, 35, 37, 39};
-
+int ledsChannel[3] = {23, 21, 19};
 int potPin_speed = A13; //potentiometer pin for speed of lights
 int potVal_speed = 0;
 int mappedPotVal_speed = 0;
@@ -31,6 +31,8 @@ boolean ledState[3][4] = {
 void setup() {
   for(int ledPin = 33; ledPin < 40; ledPin = ledPin+2)
     pinMode(ledPin, OUTPUT);
+  for(int ledChannelPin = 0; ledChannelPin < 3; ledChannelPin += 1)
+    pinMode(ledsChannel[ledChannelPin], OUTPUT);
   pinMode(nextChannelButtonPin, INPUT);
   pinMode(prevChannelButtonPin, INPUT);
 }
@@ -101,10 +103,12 @@ void nextChannel()
   channelButtonState[0] = digitalRead(nextChannelButtonPin);
   if(channelButtonState[0] == HIGH && lastChannelButtonState[0] == LOW)
   {
+    digitalWrite(ledsChannel[channelDisplayed], LOW);
     channelDisplayed += 1;
     if(channelDisplayed > 2)
       channelDisplayed = 0;
     Serial.println(channelDisplayed);
+    digitalWrite(ledsChannel[channelDisplayed], HIGH);
   }
 }
 void prevChannel()
@@ -113,9 +117,11 @@ void prevChannel()
   channelButtonState[1] = digitalRead(prevChannelButtonPin);
   if(channelButtonState[1] == HIGH && lastChannelButtonState[1] == LOW)
   {
+    digitalWrite(ledsChannel[channelDisplayed], LOW);
     channelDisplayed -= 1;
     if(channelDisplayed < 0)
       channelDisplayed = 2;
     Serial.println(channelDisplayed);
+    digitalWrite(ledsChannel[channelDisplayed], HIGH);
   }
 }
