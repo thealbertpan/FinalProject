@@ -3,7 +3,7 @@ int leds [4] = {33, 35, 37, 39};
 int potPin_speed = A13; //potentiometer pin for speed of lights
 int potVal_speed = 0;
 int mappedPotVal_speed = 0;
-int midiNote[4] = {461, 470, 490, 440};
+int midiNote[4] = {2793, 3136, 164, 440};
 
 int tempo = 0;
 int currentStep = 0;
